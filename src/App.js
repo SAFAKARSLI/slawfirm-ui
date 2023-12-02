@@ -1,16 +1,21 @@
-import { read, utils, writeFile } from 'xlsx';
-import { useState } from 'react';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import Navbar from "./components/Navbar.js"
+import Content from "./components/Content.js";
+
+import "bootstrap/dist/css/bootstrap.min.css";
+
+import "./styles/App.css"
 
 function App() {
 
-  const [pres, setPres] = useState([]);
-  console.log(file)
-
   return (
-    <div className="App">
-     <h1>Hello world</h1>
-    </div>
+    <BrowserRouter>
+        <div className="App">
+          <Navbar />
+          <Content />
+        </div>
+    </BrowserRouter>
   );
 }
 
