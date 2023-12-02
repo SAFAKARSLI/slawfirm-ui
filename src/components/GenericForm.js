@@ -10,8 +10,7 @@ import {
     Dropdown,
 } from "react-bootstrap";
 
-import { paymentParser, MONTHS } from "./Util";
-
+import { paymentParser, MONTHS, convertToByteArray } from "./Util";
 
 export default function GenericForm() {
 
@@ -36,6 +35,8 @@ export default function GenericForm() {
     const triggerGenerate = async () => {
         setForm({...form, payment_plan: paymentParser(form)})
 
+        console.log(form)
+
         const generatedDoc = await axios({ 
             url: "http://localhost:8080/documents/"+document.toString(),
             method: "post",
@@ -45,14 +46,19 @@ export default function GenericForm() {
             data: form,
             responseType: "arraybuffer"
         }).then((res) => {
-            const blob = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
-            downloadLink.current.href = URL.createObjectURL(blob)
+            const blobDocx = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
+            // const blobPdf = new Blob(convertToByteArray(res.data), {type: "application/pdf"})
+
+            downloadLink.current.href = URL.createObjectURL(blobDocx)
             downloadLink.current.download = `${form["client_name"]} Retainer Agreement.docx`
             downloadLink.current.click()
+
         }).catch((e) => {
             console.log(e)
         })
     }
+
+    
 
 
     return (

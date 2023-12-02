@@ -15,7 +15,7 @@ export const paymentParser = (data) => {
     const formatter = new Intl.DateTimeFormat('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
     var formattedDate = formatter.format(currentDate)
     
-    var output = `For the above services, the Client shall compensate Sinan Sari,  Ahmet Seyithanoglu, and Sinan Turhan according to the following fee schedule: A legal fee of $${total_fee} is to be paid as follows: $${initial_payment} to start case preparation, and then; \n\n`
+    var output = ""
     
     // Initial payment is processed
     total_fee -= initial_payment;
@@ -39,3 +39,25 @@ export const paymentParser = (data) => {
     }
     return output
 }
+
+
+export function convertToByteArray(blob) {
+    var sliceSize = 512;
+    var bytes = [];
+  
+    for (var offset = 0; offset < blob.length; offset += sliceSize) {
+      var slice = blob.slice(offset, offset + sliceSize);
+  
+      var byteNumbers = new Array(slice.length);
+  
+      for (var i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+  
+      const byteArray = new Uint8Array(byteNumbers);
+  
+      bytes.push(byteArray);
+    }
+  
+    return bytes;
+  }
