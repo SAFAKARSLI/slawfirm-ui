@@ -27,7 +27,7 @@ const Navbar = () => (
         </NavItem>
 
         <NavItem>
-          <NavLink tag={Link} to={"/generate"} className="nav-item">
+          <NavLink tag={Link} to={"/generate/retainer_agreement"} className="nav-item">
             Self-Generate
           </NavLink>
         </NavItem>

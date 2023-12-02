@@ -10,16 +10,16 @@ import {
     Dropdown,
 } from "react-bootstrap";
 
+import { paymentParser, MONTHS } from "./Util";
 
 
 export default function GenericForm() {
 
-    const [form, setForm] = useState({year: 2023})
+    const [form, setForm] = useState({})
     const downloadLink = useRef();
-    const MONTHS = ["January", "February", "March", "April",
-            "May", "June", "July", "August", "September", "October", "November", "December"]
     const [document, setDocument] = useState("62ae3b52-8ff0-11ee-b9d1-0242ac120002")
 
+    // Setting initial values for form elements
     useEffect(() => {
         const today = new Date()
         setForm({...form, 
@@ -27,16 +27,14 @@ export default function GenericForm() {
             month: MONTHS.at(today.getMonth()),
             year: today.getFullYear(),
         
-            total: 6000,
-            initial_deposit: 500,
+            total_fee: 6000,
+            initial_payment: 500,
             monthly: 500
         })
     }, [])
 
-    const triggerGenerate = async (e) => {
-        e.preventDefault()
+    const triggerGenerate = async () => {
         setForm({...form, payment_plan: paymentParser(form)})
-        console.log(form)
 
         const generatedDoc = await axios({ 
             url: "http://localhost:8080/documents/"+document.toString(),
@@ -46,84 +44,40 @@ export default function GenericForm() {
             },
             data: form,
             responseType: "arraybuffer"
+        }).then((res) => {
+            const blob = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
+            downloadLink.current.href = URL.createObjectURL(blob)
+            downloadLink.current.download = `${form["client_name"]} Retainer Agreement.docx`
+            downloadLink.current.click()
         }).catch((e) => {
             console.log(e)
         })
-
-        console.log(generatedDoc)
-
-        const blob = new Blob([generatedDoc.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
-        
-        downloadLink.current.href = URL.createObjectURL(blob)
-        downloadLink.current.download = `${form["client_name"]} Retainer Agreement.docx`
-        downloadLink.current.click()
-        
     }
 
-
-    const paymentParser = (data) => {
-
-        var total = data["total"]
-        var initial_deposit = data["initial_deposit"]
-        var monthly = data["monthly"]
-        var day = data["day"]
-        var month = MONTHS.indexOf(data["month"])
-        var year = data["year"]
-
-        data = {...data, total, initial_deposit, monthly}
-
-        var currentDate = new Date(year, month, day)
-        const formatter = new Intl.DateTimeFormat('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-        var formattedDate = formatter.format(currentDate)
-        
-        var output = `For the above services, the Client shall compensate Sinan Sari,  Ahmet Seyithanoglu, and Sinan Turhan according to the following fee schedule: A legal fee of $${total} is to be paid as follows: $${initial_deposit} to start case preparation, and then; \n\n`
-        
-        // Initial payment is processed
-        total -= initial_deposit;
-        currentDate.setMonth(currentDate.getMonth() + 1)
-        
-        while (total > 0) {
-            
-            formattedDate = formatter.format(currentDate)
-            
-            if (total - monthly <= 0) { // If last payment
-             output += `${formattedDate}: $${total}`
-            break;
-            } 
-            else {
-            // Intallment is processed
-            output += `${formattedDate}: $${monthly}\n`
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            total -= monthly;
-            } 
-            
-        }
-        return output
-    }
 
     return (
         <Form>
-            <Row className="mb-3">
-                <Form.Group as={Col}>
+            <Row>
+                <Col lg={4} md={8} className="mb-3">
                     <Form.Label>Full Name</Form.Label>
-                    <Form.Control 
+                    <Form.Control
                     type="text" 
                     placeholder="John Doe" 
                     onChange={e => setForm({...form, client_name : e.target.value})}/>
-                </Form.Group>
+                </Col>
 
-                <Form.Group as={Col}>
+                <Col lg={4} md={8} className="mb-3">
                     <Form.Label>Alien Number</Form.Label>
                     <Form.Control 
                     type="text" 
                     placeholder="245 145 233" 
                     onChange={e => setForm({...form, a_number : e.target.value})}
                     />
-                </Form.Group>
+                </Col>
             </Row>
 
-            <Row className="mb-3">
-                <Form.Group as={Col}>
+            <Row>
+                <Col className="mb-3" lg={4} md={8}>
                     <Form.Label>Date of Agreement</Form.Label>
                     <InputGroup className="mb-3" >
                         <DropdownButton
@@ -148,38 +102,34 @@ export default function GenericForm() {
                             disabled
                         />
                     </InputGroup>
-                </Form.Group>
+                </Col>
 
-                <Form.Group as={Col}>
+                <Col className="mb-3" lg={4} md={8}>
                     <Form.Label>Payment Type</Form.Label>
                     <InputGroup>
                             <Form.Control 
                                 type="number" 
-                                value={form["total"]} 
-                                onChange={e => setForm({...form, total : parseInt(e.target.value)})}/>
+                                value={form["total_fee"]} 
+                                onChange={e => setForm({...form, total_fee : parseInt(e.target.value)})}/>
                             <Form.Control 
                                 type="number" 
-                                value={form["initial_deposit"]} 
-                                onChange={e => setForm({...form, initial_deposit : parseInt(e.target.value)})}/>
+                                value={form["initial_payment"]} 
+                                onChange={e => setForm({...form, initial_payment : parseInt(e.target.value)})}/>
                             <Form.Control 
                                 type="number" 
                                 value={form["monthly"]} 
                                 onChange={e => setForm({...form, monthly : parseInt(e.target.value)})}/>
                     </InputGroup>
-                </Form.Group>
 
-                <Form.Group controlId="signatue" className="mb-3" as={Col}>
-                    <Form.Label >Signature</Form.Label>
-                    <Form.Control type="file" onChange={e => setForm({...form, signature : e.target.value})}/>
-                </Form.Group>
+                    
+                </Col>
             </Row>
-        
-
-            <Button variant="primary" onClick={(e) => triggerGenerate(e)} >
-                Generate
-            </Button>
-
-            <a ref={downloadLink}></a>
+            <Row>
+                <Col lg={8} md={8}>
+                        <Button variant="primary" onClick={(e) => triggerGenerate(e)} >Generate</Button>
+                        <a ref={downloadLink}></a>
+                </Col>
+            </Row>
         </Form>
   );
 }
