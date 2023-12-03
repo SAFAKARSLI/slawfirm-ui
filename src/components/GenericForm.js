@@ -10,18 +10,21 @@ import {
     Dropdown,
 } from "react-bootstrap";
 
-import { paymentParser, MONTHS, convertToByteArray } from "./Util";
+import { paymentParser, MONTHS } from "./Util";
 
 export default function GenericForm() {
 
     const [form, setForm] = useState({})
     const downloadLink = useRef();
+    const [buttonLoad, setButtonLoad] = useState(false)
+    const [checked, setChecked] = useState(true)
     const [document, setDocument] = useState("62ae3b52-8ff0-11ee-b9d1-0242ac120002")
 
     // Setting initial values for form elements
     useEffect(() => {
         const today = new Date()
         setForm({...form, 
+            document_name: `Retainer Agreement`,
             day: today.getDate(),
             month: MONTHS.at(today.getMonth()),
             year: today.getFullYear(),
@@ -32,7 +35,9 @@ export default function GenericForm() {
         })
     }, [])
 
+
     const triggerGenerate = async () => {
+        setButtonLoad(true)
         setForm({...form, payment_plan: paymentParser(form)})
 
         console.log(form)
@@ -44,20 +49,37 @@ export default function GenericForm() {
                 "Content-Type": "application/json"
             },
             data: form,
-            responseType: "arraybuffer"
+            responseType: "json"
         }).then((res) => {
-            const blobDocx = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
-            // const blobPdf = new Blob(convertToByteArray(res.data), {type: "application/pdf"})
+            
+            
+            console.log(res)
+            window.open(res.data.cloudUrl).onload = setButtonLoad(false)
 
-            downloadLink.current.href = URL.createObjectURL(blobDocx)
-            downloadLink.current.download = `${form["client_name"]} Retainer Agreement.docx`
-            downloadLink.current.click()
+            // const blobDocx = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
+            // downloadLink.current.href = URL.createObjectURL(blobDocx)
+            // downloadLink.current.download = `${form["client_name"]} Retainer Agreement.docx`
+            // downloadLink.current.click()
+
+            // downloadLink.current.href = URL.createObjectURL(blobPdf)
+            // downloadLink.current.download = `${form["client_name"]} Retainer Agreement.pdf`
+            // downloadLink.current.click()
 
         }).catch((e) => {
             console.log(e)
         })
     }
 
+
+
+    const onChangeName = (value) => {
+        if (checked) {
+            setForm({...form, client_name: value, document_name: `${value} Retainer Agreement`})
+        } else {
+            setForm({...form, client_name: value})
+        }
+        
+    }
     
 
 
@@ -69,7 +91,7 @@ export default function GenericForm() {
                     <Form.Control
                     type="text" 
                     placeholder="John Doe" 
-                    onChange={e => setForm({...form, client_name : e.target.value})}/>
+                    onChange={(e) => onChangeName(e.target.value)}/>
                 </Col>
 
                 <Col lg={4} md={8} className="mb-3">
@@ -85,7 +107,7 @@ export default function GenericForm() {
             <Row>
                 <Col className="mb-3" lg={4} md={8}>
                     <Form.Label>Date of Agreement</Form.Label>
-                    <InputGroup className="mb-3" >
+                    <InputGroup>
                         <DropdownButton
                         variant="outline-dark"
                         id="month-dropdown"
@@ -95,7 +117,7 @@ export default function GenericForm() {
                                 return <Dropdown.Item 
                                 key={i}
                                 value={i}
-                                active={form["month"] == e}
+                                active={form["month"] === e}
                                 onClick ={() => setForm({...form, month: e})}
                                 >{e}</Dropdown.Item>
                             })}
@@ -126,13 +148,32 @@ export default function GenericForm() {
                                 value={form["monthly"]} 
                                 onChange={e => setForm({...form, monthly : parseInt(e.target.value)})}/>
                     </InputGroup>
-
-                    
                 </Col>
             </Row>
             <Row>
-                <Col lg={8} md={8}>
-                        <Button variant="primary" onClick={(e) => triggerGenerate(e)} >Generate</Button>
+                <Col className="mb-3" lg={4} md={8}>
+                    <Form.Label>File Name</Form.Label>
+                    <InputGroup >
+                        <InputGroup.Checkbox 
+                        checked={checked} 
+                        onChange={() => setChecked(!checked)} 
+                        aria-label="Checkbox for following text input" />
+                        <Form.Control 
+                            value={form["document_name"]}
+                            disabled={checked} 
+                            onChange={e => setForm({...form, document_name : e.target.value})}/>         
+                    </InputGroup>
+                </Col>
+            </Row>
+            <Row>
+                <Col className="mb-3" lg={8} md={8}>
+                        <Button 
+                            variant="primary" 
+                            disabled={buttonLoad}
+                            onClick={buttonLoad ? null : (e) => triggerGenerate(e)} 
+                        >
+                            {buttonLoad ? 'Loading...' : 'Generate'}
+                        </Button>
                         <a ref={downloadLink}></a>
                 </Col>
             </Row>
