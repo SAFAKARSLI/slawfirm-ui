@@ -1,5 +1,7 @@
-export const MONTHS = ["JAN", "FEB", "MAR", "APR",
-"MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+export const MONTHS = ["January", "February", "March", "April",
+"May", "June", "July", "August", "September", "October", "November", "December"]
+
+export const GENERATE_ACTIONS = ["Retainer Agreement", "Written Plea"]
 
 
 export const paymentParser = (data) => {
@@ -39,25 +41,3 @@ export const paymentParser = (data) => {
     }
     return output
 }
-
-
-export function convertToByteArray(blob) {
-    var sliceSize = 512;
-    var bytes = [];
-  
-    for (var offset = 0; offset < blob.length; offset += sliceSize) {
-      var slice = blob.slice(offset, offset + sliceSize);
-  
-      var byteNumbers = new Array(slice.length);
-  
-      for (var i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-  
-      const byteArray = new Uint8Array(byteNumbers);
-  
-      bytes.push(byteArray);
-    }
-  
-    return bytes;
-  }

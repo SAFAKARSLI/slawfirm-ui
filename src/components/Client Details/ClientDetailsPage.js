@@ -15,12 +15,11 @@ function ClientDetails() {
         }
         getClient()
 
-    })
+    }, [])
 
     var output = "";
-    console.log(Object.keys(client))
     Object.keys(client).forEach(k => {
-        output = output.concat(`${k}: ${client[k]}`)
+        output = output.concat(`${k}: ${client[k]} `)
     })
 
     return <div>{output}</div>

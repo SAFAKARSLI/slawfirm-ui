@@ -1,20 +1,19 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import Navbar from "./components/Navbar.js"
+import AppNavbar from "./components/AppNavbar.js"
 import Content from "./components/Content.js";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-
-import "./styles/App.css"
+import { Stack } from "react-bootstrap";
 
 function App() {
 
   return (
     <BrowserRouter>
-        <div className="App">
-          <Navbar />
-          <Content />
-        </div>
+      <Stack gap={4}>
+        <AppNavbar />
+        <Content />
+      </Stack>
     </BrowserRouter>
   );
 }

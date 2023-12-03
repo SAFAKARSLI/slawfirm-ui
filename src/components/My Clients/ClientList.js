@@ -1,12 +1,14 @@
 import axios from "axios";
-import {useEffect, useState} from "react";
+import {useEffect, useState, createContext} from "react";
 import { Table } from "reactstrap";
-import { Container, Row, Col } from "react-bootstrap";
 
 import ClientItem from "./ClientItem"
+import GenerateModal from "./GenerateModal";
 
 function ClientList() {
-    const [clients, setClients] = useState(["SAFA KARSLI", "CENAB YAVUZ"])
+    const [clients, setClients] = useState([])
+    const [modalShow, setModalShow] = useState(false);
+    const [clientInfo, setClientInfo] = useState({})
 
     useEffect( () => {
         const getClients = async () => {
@@ -16,47 +18,43 @@ function ClientList() {
         getClients()
     }, [])
 
-
     return (
-        <Container id="my_clients">
-            <Row>
-                <Col 
-                // sm={10}
-                >
-                    <Table
-                        className="table"
-                        size="sm"
-                        hover
-                        responsive
-                        striped
-                        bordered
-                    >
-                        <thead className="table-header">
-                            <tr >
-                                <th>#</th>
-                                <th>A-Number</th>
-                                <th>Full Name</th>
-                                <th>Phone Number</th>
-                                <th>Client Details</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {clients.map( (p, i) => {
-                                return <ClientItem 
-                                key={p.id} 
-                                id={p.id} 
-                                aNum={p.alienNumber} 
-                                clientName={p.fullName} 
-                                phoneNumber={p.phoneNumber}
-                                index={i}
-                                />
-                            })}
-                        </tbody>
-                    </Table>
-                </Col>
-            </Row>
-        </Container>
+        <div>
+            <Table
+                className="table"
+                size="sm"
+                hover
+                responsive
+                striped
+                bordered
+            >
+                <thead className="table-header">
+                    <tr >
+                        <th>#</th>
+                        <th>A-Number</th>
+                        <th>Full Name</th>
+                        <th>Phone Number</th>
+                        <th>Client Details</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {clients.map( (p, i) => {
+                        return <ClientItem 
+                        key={p.id} 
+                        id={p.id} 
+                        alienNumber={p.alienNumber} 
+                        clientName={p.fullName} 
+                        phoneNumber={p.phoneNumber}
+                        index={i}
+                        triggerModal={() => setModalShow(true)}
+                        setClientInfo={setClientInfo}
+                        />
+                    })}
+                </tbody>
+            </Table>
+            <GenerateModal clientInfo={clientInfo} show={modalShow} onHide={() => setModalShow(false)}/>
+        </div>
     )
 }
 

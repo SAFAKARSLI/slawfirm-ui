@@ -10,45 +10,41 @@ import {
     Dropdown,
 } from "react-bootstrap";
 
-import { paymentParser, MONTHS } from "./Util";
+import { paymentParser, MONTHS, dateParser } from "./Util";
 
-export default function GenericForm() {
+export default function GenericForm({initalForm}) {
 
-    const [form, setForm] = useState({})
     const downloadLink = useRef();
     const [buttonLoad, setButtonLoad] = useState(false)
     const [checked, setChecked] = useState(true)
     const [document, setDocument] = useState("62ae3b52-8ff0-11ee-b9d1-0242ac120002")
+    const [form, setForm] = useState({...initalForm, 
+        document_name: `${initalForm["client_name"]} Retainer Agreement`,
+        day: new Date().getDate(),
+        month: MONTHS.at(new Date().getMonth()),
+        year: new Date().getFullYear(),
 
-    // Setting initial values for form elements
-    useEffect(() => {
-        const today = new Date()
-        setForm({...form, 
-            document_name: `Retainer Agreement`,
-            day: today.getDate(),
-            month: MONTHS.at(today.getMonth()),
-            year: today.getFullYear(),
-        
-            total_fee: 6000,
-            initial_payment: 500,
-            monthly: 500
-        })
-    }, [])
+        total_fee: 6000,
+        initial_payment: 500,
+        monthly: 500})
+
 
 
     const triggerGenerate = async () => {
-        setButtonLoad(true)
-        setForm({...form, payment_plan: paymentParser(form)})
 
         console.log(form)
 
-        const generatedDoc = await axios({ 
+        setButtonLoad(true)
+
+        await axios({ 
             url: "http://localhost:8080/documents/"+document.toString(),
             method: "post",
             headers: {
                 "Content-Type": "application/json"
             },
-            data: form,
+            data: {...form, 
+                payment_plan: paymentParser(form), 
+                date_of_agreement: `${form["month"]} ${form["day"]}, ${form["year"]}`},
             responseType: "json"
         }).then((res) => {
             
@@ -68,6 +64,8 @@ export default function GenericForm() {
         }).catch((e) => {
             console.log(e)
         })
+
+        
     }
 
 
@@ -81,31 +79,31 @@ export default function GenericForm() {
         
     }
     
-
-
     return (
         <Form>
             <Row>
-                <Col lg={4} md={8} className="mb-3">
+                <Col lg={6} md={8} className="mb-3">
                     <Form.Label>Full Name</Form.Label>
                     <Form.Control
                     type="text" 
-                    placeholder="John Doe" 
+                    placeholder="John Doe"
+                    value={form["client_name"]} 
                     onChange={(e) => onChangeName(e.target.value)}/>
                 </Col>
 
-                <Col lg={4} md={8} className="mb-3">
+                <Col lg={6} md={8} className="mb-3">
                     <Form.Label>Alien Number</Form.Label>
                     <Form.Control 
                     type="text" 
-                    placeholder="245 145 233" 
+                    placeholder="*** *** ***" 
+                    value={form["alien_number"]}
                     onChange={e => setForm({...form, a_number : e.target.value})}
                     />
                 </Col>
             </Row>
 
             <Row>
-                <Col className="mb-3" lg={4} md={8}>
+                <Col className="mb-3" lg={6} md={8}>
                     <Form.Label>Date of Agreement</Form.Label>
                     <InputGroup>
                         <DropdownButton
@@ -132,7 +130,7 @@ export default function GenericForm() {
                     </InputGroup>
                 </Col>
 
-                <Col className="mb-3" lg={4} md={8}>
+                <Col className="mb-3" lg={6} md={8}>
                     <Form.Label>Payment Type</Form.Label>
                     <InputGroup>
                             <Form.Control 
@@ -151,7 +149,7 @@ export default function GenericForm() {
                 </Col>
             </Row>
             <Row>
-                <Col className="mb-3" lg={4} md={8}>
+                <Col className="mb-3" lg={6} md={8}>
                     <Form.Label>File Name</Form.Label>
                     <InputGroup >
                         <InputGroup.Checkbox 
@@ -166,7 +164,7 @@ export default function GenericForm() {
                 </Col>
             </Row>
             <Row>
-                <Col className="mb-3" lg={8} md={8}>
+                <Col className="mb-3" lg={6} md={8}>
                         <Button 
                             variant="primary" 
                             disabled={buttonLoad}
