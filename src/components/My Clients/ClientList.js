@@ -1,22 +1,33 @@
-import axios from "axios";
-import {useEffect, useState, createContext} from "react";
-import { Table } from "reactstrap";
+import {useState, useContext} from "react";
+import { Table } from "react-bootstrap";
 
 import ClientItem from "./ClientItem"
 import GenerateModal from "./GenerateModal";
 
-function ClientList() {
-    const [clients, setClients] = useState([])
-    const [modalShow, setModalShow] = useState(false);
-    const [clientInfo, setClientInfo] = useState({})
+import { ClientsContext } from "../../App";
 
-    useEffect( () => {
-        const getClients = async () => {
-            const fetchClients = await axios.get("http://localhost:8080/clients")
-            setClients(fetchClients.data)
-        }
-        getClients()
-    }, [])
+
+function ClientList() {
+    const [modalShow, setModalShow] = useState(false);
+    const [clientInfo, setClientInfo] = useState({});
+    const [clients, setClients]  = useContext(ClientsContext);    
+
+
+    const renderClients = () => {
+        const renderedList = clients.map( (p, i) => {
+            return <ClientItem 
+            key={p.id} 
+            id={p.id} 
+            alienNumber={p.alienNumber} 
+            clientName={p.fullName} 
+            index={i}
+            triggerModal={() => setModalShow(true)}
+            setClientInfo={setClientInfo}
+            />
+        })
+        return renderedList
+    }
+
 
     return (
         <div>
@@ -33,24 +44,12 @@ function ClientList() {
                         <th>#</th>
                         <th>A-Number</th>
                         <th>Full Name</th>
-                        <th>Phone Number</th>
                         <th>Client Details</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {clients.map( (p, i) => {
-                        return <ClientItem 
-                        key={p.id} 
-                        id={p.id} 
-                        alienNumber={p.alienNumber} 
-                        clientName={p.fullName} 
-                        phoneNumber={p.phoneNumber}
-                        index={i}
-                        triggerModal={() => setModalShow(true)}
-                        setClientInfo={setClientInfo}
-                        />
-                    })}
+                    {renderClients()}
                 </tbody>
             </Table>
             <GenerateModal clientInfo={clientInfo} show={modalShow} onHide={() => setModalShow(false)}/>

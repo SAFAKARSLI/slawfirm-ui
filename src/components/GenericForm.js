@@ -12,7 +12,7 @@ import {
 
 import { paymentParser, MONTHS, dateParser } from "./Util";
 
-export default function GenericForm({initalForm}) {
+export default function GenericForm({initalForm={client_name : ""}}) {
 
     const downloadLink = useRef();
     const [buttonLoad, setButtonLoad] = useState(false)
@@ -97,7 +97,7 @@ export default function GenericForm({initalForm}) {
                     type="text" 
                     placeholder="*** *** ***" 
                     value={form["alien_number"]}
-                    onChange={e => setForm({...form, a_number : e.target.value})}
+                    onChange={e => setForm({...form, alien_number : e.target.value})}
                     />
                 </Col>
             </Row>
@@ -131,7 +131,7 @@ export default function GenericForm({initalForm}) {
                 </Col>
 
                 <Col className="mb-3" lg={6} md={8}>
-                    <Form.Label>Payment Type</Form.Label>
+                    <Form.Label>Payment Plan</Form.Label>
                     <InputGroup>
                             <Form.Control 
                                 type="number" 

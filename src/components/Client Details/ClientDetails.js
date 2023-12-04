@@ -6,7 +6,7 @@ import axios from "axios";
 
 function ClientDetails() {
     const {clientId} = useParams()
-    const [client, setClient] = useState({})
+    const [client, setClient] = useState([])
 
     useEffect(()  => {
         const getClient = async () => {
