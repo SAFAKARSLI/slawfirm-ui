@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Badge, Dropdown, Button, Stack } from "react-bootstrap";
 import { GENERATE_ACTIONS } from "../Util.js"
-import axios from "axios";
+import { base_axios } from "../Util.js"; 
 import { useContext } from "react";
 import { ClientsContext } from "../../App.js";
 
@@ -12,8 +12,8 @@ function ClientItem({setClientInfo, clientName, id, alienNumber, index, triggerM
     const [clients, setClients] = useContext(ClientsContext)
 
     const onDeleteClick = async () => {
-        const postDelete = await axios.delete(`http://localhost:8080/clients/${id}`)
-        setClients(clients.filter((e) => e.fullName != clientName ))
+        const postDelete = await base_axios.delete(`clients/${id}`)
+        setClients(clients.filter((e) => e.id != id ))
     }
 
     const onGenerateClick = () => {

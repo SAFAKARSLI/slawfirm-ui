@@ -1,7 +1,6 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
 import { Table } from "react-bootstrap";
-
+import { base_axios } from "../Util";
 
 
 export default function Documents() {
@@ -11,7 +10,7 @@ export default function Documents() {
     useEffect( () => {
         const getDocuments = async () => {
             
-            const documents = await axios.get("http://localhost:8080/documents")
+            const documents = await base_axios.get("documents")
             setDocuments(documents.data)
         }
         getDocuments()

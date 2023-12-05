@@ -6,7 +6,7 @@ import Content from "./components/Content.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Stack } from "react-bootstrap";
 import { useState, createContext, useLayoutEffect, useEffect } from "react";
-import axios from "axios";
+import { base_axios } from "./components/Util.js";
 
 export const ClientsContext = createContext()
 
@@ -16,7 +16,8 @@ function App() {
 
   useLayoutEffect(() => {
     const fetchClients = async () => {
-        const clientsFromDb = await axios.get("http://localhost:8080/clients")
+        const clientsFromDb = await base_axios.get("clients")
+        console.log(clientsFromDb.data)
         setClients(clientsFromDb.data)
     }
     fetchClients()

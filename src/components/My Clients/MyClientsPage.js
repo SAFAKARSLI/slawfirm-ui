@@ -2,9 +2,7 @@ import ClientList from "./ClientList"
 import SearchBar from "./SearchBar"
 import AddClientButton from "./AddClientButton"
 import { Stack } from "react-bootstrap"
-import axios from "axios";
-import { useState } from "react";
-
+import Navigator from "./Navigator"
 
 
 function MyClients() {
@@ -14,6 +12,7 @@ function MyClients() {
             <SearchBar />
             <AddClientButton />
             <ClientList />
+            <Navigator />
         </Stack>
     );
 }

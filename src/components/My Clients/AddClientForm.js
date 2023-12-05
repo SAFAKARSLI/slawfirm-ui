@@ -1,4 +1,4 @@
-import axios from "axios";
+import { base_axios } from "../Util";
 import { useEffect, useRef, useState } from "react";
 import { 
     Form, 
@@ -10,7 +10,7 @@ import ClientGenerateSuccessAlert from "./ClientGenerateSuccessAlert";
 
 export default function AddClientForm() {
 
-    const [form, setForm] = useState()
+    const [form, setForm] = useState({})
     const [alertInfo, setAlertInfo] = useState({
         showAlert: false,
         buttonLoad: false
@@ -19,8 +19,8 @@ export default function AddClientForm() {
     const triggerGenerate = async () => {
         setAlertInfo({buttonLoad: true})
 
-        await axios({ 
-            url: "http://localhost:8080/clients",
+        await base_axios({ 
+            url: "clients",
             method: "post",
             headers: {
                 "Content-Type": "application/json"
@@ -28,13 +28,14 @@ export default function AddClientForm() {
             data: {...form},
             responseType: "json"
         }).then((res) => {
-            console.log(res)
             setAlertInfo({
                 showAlert: true,
                 clientInfo: res.data
             })
-
-            
+            setForm({
+                fullName: "",
+                alienNumber: ""
+            })
         }).catch((e) => {
             console.log(e)
         })
@@ -53,6 +54,7 @@ export default function AddClientForm() {
                     autoFocus
                     type="text" 
                     placeholder="John Doe"
+                    value={form["fullName"]}
                     onChange={(e) => setForm({...form, fullName: e.target.value})}/>
                 </Col>
 
@@ -61,6 +63,7 @@ export default function AddClientForm() {
                     <Form.Control 
                     type="text" 
                     placeholder="*** *** ***" 
+                    value={form["alienNumber"]}
                     onChange={e => setForm({...form, alienNumber : e.target.value})}
                     />
                 </Col>

@@ -1,7 +1,11 @@
+import axios from "axios"
+
 export const MONTHS = ["January", "February", "March", "April",
 "May", "June", "July", "August", "September", "October", "November", "December"]
 
 export const GENERATE_ACTIONS = ["Retainer Agreement", "Written Plea"]
+
+export const base_axios = axios.create({ baseURL: "http://192.168.1.126:8080/"})
 
 
 export const paymentParser = (data) => {

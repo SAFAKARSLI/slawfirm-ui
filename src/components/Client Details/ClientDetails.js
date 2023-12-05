@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-
+import { base_axios } from "../Util";
 
 
 function ClientDetails() {
@@ -10,7 +9,7 @@ function ClientDetails() {
 
     useEffect(()  => {
         const getClient = async () => {
-            const fetchClients = await axios.get("http://localhost:8080/clients/"+clientId)
+            const fetchClients = await base_axios.get("clients/"+clientId)
             setClient(fetchClients.data)
         }
         getClient()

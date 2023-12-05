@@ -1,4 +1,4 @@
-import axios from "axios";
+import { base_axios } from "./Util";
 import { useEffect, useRef, useState } from "react";
 import { 
     Form, 
@@ -36,8 +36,8 @@ export default function GenericForm({initalForm={client_name : ""}}) {
 
         setButtonLoad(true)
 
-        await axios({ 
-            url: "http://localhost:8080/documents/"+document.toString(),
+        await base_axios({ 
+            url: "documents/"+document.toString(),
             method: "post",
             headers: {
                 "Content-Type": "application/json"
@@ -136,15 +136,21 @@ export default function GenericForm({initalForm={client_name : ""}}) {
                             <Form.Control 
                                 type="number" 
                                 value={form["total_fee"]} 
-                                onChange={e => setForm({...form, total_fee : parseInt(e.target.value)})}/>
+                                onChange={e => setForm({...form, total_fee : parseInt(e.target.value)})}
+                                min={0}
+                                step={500}/>
                             <Form.Control 
                                 type="number" 
                                 value={form["initial_payment"]} 
-                                onChange={e => setForm({...form, initial_payment : parseInt(e.target.value)})}/>
+                                onChange={e => setForm({...form, initial_payment : parseInt(e.target.value)})}
+                                min={0}
+                                step={100}/>
                             <Form.Control 
                                 type="number" 
                                 value={form["monthly"]} 
-                                onChange={e => setForm({...form, monthly : parseInt(e.target.value)})}/>
+                                onChange={e => setForm({...form, monthly : parseInt(e.target.value)})}
+                                min={0}
+                                step={100}/>
                     </InputGroup>
                 </Col>
             </Row>
