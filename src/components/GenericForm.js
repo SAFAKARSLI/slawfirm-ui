@@ -8,15 +8,17 @@ import {
     InputGroup,
     DropdownButton,
     Dropdown,
+    FloatingLabel
 } from "react-bootstrap";
 
-import { paymentParser, MONTHS, dateParser } from "./Util";
+import { paymentParser, MONTHS } from "./Util";
 
 export default function GenericForm({initalForm={client_name : ""}}) {
 
     const downloadLink = useRef();
     const [buttonLoad, setButtonLoad] = useState(false)
     const [checked, setChecked] = useState(true)
+    const [frequency, setFrequency] = useState(1)
     const [document, setDocument] = useState("62ae3b52-8ff0-11ee-b9d1-0242ac120002")
     const [form, setForm] = useState({...initalForm, 
         document_name: `${initalForm["client_name"]} Retainer Agreement`,
@@ -43,12 +45,10 @@ export default function GenericForm({initalForm={client_name : ""}}) {
                 "Content-Type": "application/json"
             },
             data: {...form, 
-                payment_plan: paymentParser(form), 
+                payment_plan: paymentParser(form, frequency), 
                 date_of_agreement: `${form["month"]} ${form["day"]}, ${form["year"]}`},
             responseType: "json"
         }).then((res) => {
-            
-            
             console.log(res)
             window.open(res.data.cloudUrl).onload = setButtonLoad(false)
 
@@ -82,7 +82,7 @@ export default function GenericForm({initalForm={client_name : ""}}) {
     return (
         <Form>
             <Row>
-                <Col lg={6} md={8} className="mb-3">
+                <Col lg={6} md={12} className="mb-3">
                     <Form.Label>Full Name</Form.Label>
                     <Form.Control
                     type="text" 
@@ -91,7 +91,7 @@ export default function GenericForm({initalForm={client_name : ""}}) {
                     onChange={(e) => onChangeName(e.target.value)}/>
                 </Col>
 
-                <Col lg={6} md={8} className="mb-3">
+                <Col lg={6} md={12} className="mb-3">
                     <Form.Label>Alien Number</Form.Label>
                     <Form.Control 
                     type="text" 
@@ -103,7 +103,7 @@ export default function GenericForm({initalForm={client_name : ""}}) {
             </Row>
 
             <Row>
-                <Col className="mb-3" lg={6} md={8}>
+                <Col className="mb-3" lg={6} md={12}>
                     <Form.Label>Date of Agreement</Form.Label>
                     <InputGroup>
                         <DropdownButton
@@ -123,35 +123,52 @@ export default function GenericForm({initalForm={client_name : ""}}) {
                         <Form.Control type="number" id="day" value={form["day"]} onChange={e => setForm({...form, day : parseInt(e.target.value)})}/>
                         <DropdownButton
                             variant="secondary"
-                            id="year-dropdown"
                             title={form["year"]}
-                            disabled
-                        />
+                            
+                        >
+                            <Dropdown.Item onClick={() => setForm({...form, year: 2023})}>2023</Dropdown.Item>
+                            <Dropdown.Item onClick={() => setForm({...form, year: 2024})}>2024</Dropdown.Item>
+                        </DropdownButton>
                     </InputGroup>
                 </Col>
 
-                <Col className="mb-3" lg={6} md={8}>
+                <Col className="mb-3" lg={6} md={12}>
                     <Form.Label>Payment Plan</Form.Label>
                     <InputGroup>
+                        <FloatingLabel label="Total">
                             <Form.Control 
                                 type="number" 
                                 value={form["total_fee"]} 
                                 onChange={e => setForm({...form, total_fee : parseInt(e.target.value)})}
                                 min={0}
                                 step={500}/>
+                        </FloatingLabel>        
+                        <FloatingLabel label="Initial Deposit">
                             <Form.Control 
                                 type="number" 
                                 value={form["initial_payment"]} 
                                 onChange={e => setForm({...form, initial_payment : parseInt(e.target.value)})}
                                 min={0}
                                 step={100}/>
+                        </FloatingLabel>
+                        <FloatingLabel label="Per Month">
                             <Form.Control 
                                 type="number" 
                                 value={form["monthly"]} 
                                 onChange={e => setForm({...form, monthly : parseInt(e.target.value)})}
                                 min={0}
                                 step={100}/>
+                                </FloatingLabel>
+                        <FloatingLabel label="Frequency">
+                            <Form.Control 
+                                type="number" 
+                                value={frequency}
+                                onChange={e => setFrequency(e.target.value)}
+                                min={0}
+                            />
+                        </FloatingLabel>
                     </InputGroup>
+
                 </Col>
             </Row>
             <Row>
@@ -170,7 +187,7 @@ export default function GenericForm({initalForm={client_name : ""}}) {
                 </Col>
             </Row>
             <Row>
-                <Col className="mb-3" lg={6} md={8}>
+                <Col className="mb-3" lg={6} md={12}>
                         <Button 
                             variant="primary" 
                             disabled={buttonLoad}
@@ -178,7 +195,7 @@ export default function GenericForm({initalForm={client_name : ""}}) {
                         >
                             {buttonLoad ? 'Loading...' : 'Generate'}
                         </Button>
-                        <a ref={downloadLink}></a>
+                        {/* <a ref={downloadLink}></a> */}
                 </Col>
             </Row>
         </Form>

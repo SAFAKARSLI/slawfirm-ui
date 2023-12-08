@@ -8,8 +8,7 @@ function GenerateModal({clientInfo, show, onHide}) {
     <Modal
       show={show}
       onHide={onHide}
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
+      size='xl'
       centered
     >
       <Modal.Header closeButton>
@@ -19,13 +18,13 @@ function GenerateModal({clientInfo, show, onHide}) {
       </Modal.Header>
       <Modal.Body>
         <Container>
-            <Row className="justify-content-md-center">
+            <Row className="justify-content-md-center" sm={12}>
                 <GenericForm initalForm={clientInfo}/>
             </Row>
         </Container>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHide}>Close</Button>
+        <Button onClick={onHide} variant='outline-danger'>Close</Button>
       </Modal.Footer>
     </Modal>
   );

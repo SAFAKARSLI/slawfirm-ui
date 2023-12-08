@@ -8,7 +8,7 @@ export const GENERATE_ACTIONS = ["Retainer Agreement", "Written Plea"]
 export const base_axios = axios.create({ baseURL: "http://192.168.1.126:8080/"})
 
 
-export const paymentParser = (data) => {
+export const paymentParser = (data, frequency) => {
 
     var total_fee = data["total_fee"]
     var initial_payment = data["initial_payment"]
@@ -25,7 +25,7 @@ export const paymentParser = (data) => {
     
     // Initial payment is processed
     total_fee -= initial_payment;
-    currentDate.setMonth(currentDate.getMonth() + 1)
+    currentDate.setMonth(currentDate.getMonth() + parseInt(frequency))
     
     while (total_fee > 0) {
         
@@ -38,7 +38,7 @@ export const paymentParser = (data) => {
         else {
         // Intallment is processed
         output += `${formattedDate}: $${monthly}\n`
-        currentDate.setMonth(currentDate.getMonth() + 1);
+        currentDate.setMonth(currentDate.getMonth() + parseInt(frequency));
         total_fee -= monthly;
         } 
         

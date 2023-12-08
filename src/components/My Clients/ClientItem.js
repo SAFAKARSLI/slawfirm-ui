@@ -23,7 +23,7 @@ function ClientItem({setClientInfo, clientName, id, alienNumber, index, triggerM
 
     return (
         <tr className="table-row" key={id}>
-            <td scope="row"> 
+            <td scope="row" > 
                 {index}
             </td>
             <td className="item">
@@ -33,20 +33,20 @@ function ClientItem({setClientInfo, clientName, id, alienNumber, index, triggerM
                 {clientName}
             </td>
             <td className="item">
-                <Link  to={`/clients/${id}`}>View Details</Link>
+                <Link style={{color:"blue"}} to={`/clients/${id}`}>View Details</Link>
             </td>
             <td>
                 <Stack direction="horizontal" >
                     <Dropdown>
-                        <Badge bg="success" as={Dropdown.Toggle}>Options</Badge>
+                        <Badge bg="secondary" style={{border: "none"}} as={Dropdown.Toggle}>Options</Badge>
                             
                             <Dropdown.Menu>
                             <Dropdown.Header style={{textDecoration: "underline"}}>GENERATE</Dropdown.Header>
                                 {GENERATE_ACTIONS.map((title,i) => {
                                     return <Dropdown.Item key={i} onClick={() => onGenerateClick()}>{title}</Dropdown.Item>
                                 })}
-                                <Dropdown.Divider />
-                                <Dropdown.Item as={Button}  onClick={() => onDeleteClick()}>Delete</Dropdown.Item>
+                            <Dropdown.Divider />
+                            <Dropdown.Item onClick={() => onDeleteClick()}>Delete</Dropdown.Item>
                             </Dropdown.Menu>         
                     </Dropdown>
                 </Stack>
